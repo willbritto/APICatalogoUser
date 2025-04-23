@@ -3,6 +3,7 @@ using Estudando_API.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Estudando_API.Controllers
 {
@@ -19,13 +20,13 @@ namespace Estudando_API.Controllers
         }
 
         [HttpGet("Produtos")]
-        public ActionResult<IEnumerable<Usuario>> GetUserProduct()
+        public async Task<ActionResult<IEnumerable<Usuario>>> GetUserProduct()
         {
-            _logger.LogInformation("Relacionamento entre a tabela Usuarios e Produtos");
+            _logger.LogInformation("================== Relacionamento entre a tabela Usuarios e Produtos ===================");
             _logger.LogInformation(" ================= GET/Usuarios/Produtos =====================");
             try
             {
-                return _context.Usuarios.Include(p => p.Produtos).Where(c => c.UsuarioId >= 1).ToList();
+                return await _context.Usuarios.Include(p => p.Produtos).Where(c => c.UsuarioId >= 1).ToListAsync();
 
             }
             catch (Exception)
@@ -37,12 +38,12 @@ namespace Estudando_API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Usuario>> AllUserGet()
+        public async Task<ActionResult<IEnumerable<Usuario>>> AllUserGet()
         {
             _logger.LogInformation(" ================= GET/Usuarios =====================");
             try
             {
-                var usuarios = _context.Usuarios.Take(10).ToList();
+                var usuarios = await _context.Usuarios.Take(10).ToListAsync();
                 if (usuarios is null)
                 {
                     return NotFound($"Não há usuários cadastrados no banco de dados ...  ");
@@ -57,12 +58,12 @@ namespace Estudando_API.Controllers
         }
 
         [HttpGet("{id:int}", Name = "ObterUsuario")]
-        public ActionResult<Usuario> UserIdGet(int id)
+        public async Task<ActionResult<Usuario>> UserIdGet(int id)
         {
             _logger.LogInformation(" ================= GET/Usuarios/{id} =====================");
             try
             {
-                var usuario = _context.Usuarios.FirstOrDefault(u => u.UsuarioId == id);
+                var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UsuarioId == id);
                 if (usuario is null)
                 {
                     return NotFound($"Usuario com id = {id} não cadastrado ...");
@@ -78,7 +79,7 @@ namespace Estudando_API.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateUserPost(Usuario usuario)
+        public async Task<ActionResult> CreateUserPost(Usuario usuario)
         {
             _logger.LogInformation(" ================= POST/Usuarios =====================");
             try
@@ -88,7 +89,7 @@ namespace Estudando_API.Controllers
                     return BadRequest("Dados inválidos/ erro ao cadastrar novo usuário ... ");
                 }
                 _context.Usuarios.Add(usuario);
-                _context.SaveChanges();
+               await _context.SaveChangesAsync();
 
                 return new CreatedAtRouteResult("ObterUsuario", new { id = usuario.UsuarioId }, usuario);
             }
@@ -100,7 +101,7 @@ namespace Estudando_API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult UpdateUserPut(int id, Usuario usuario)
+        public async Task<ActionResult> UpdateUserPut(int id, Usuario usuario)
         {
             _logger.LogInformation(" ================= PUT/Usuarios/{id} =====================");
             try
@@ -108,7 +109,7 @@ namespace Estudando_API.Controllers
                 if (id != usuario.UsuarioId)
                     return BadRequest("Dados inválidos");
                 _context.Entry(usuario).State = EntityState.Modified;
-                _context.SaveChanges();
+               await _context.SaveChangesAsync();
 
                 return Ok();
             }
@@ -120,18 +121,18 @@ namespace Estudando_API.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult DeleteUser(int id)
+        public async Task<ActionResult> DeleteUser(int id)
         {
             _logger.LogInformation(" ================= DELETE/Usuarios/{id} =====================");
             try
             {
-                var usuario = _context.Usuarios.FirstOrDefault(p => p.UsuarioId == id);
+                var usuario = await _context.Usuarios.FirstOrDefaultAsync(p => p.UsuarioId == id);
                 if (usuario is null)
                 {
                     return NotFound($"Usuário com o ID = {id} não cadastrado/existente ..");
                 }
                 _context.Remove(usuario);
-                _context.SaveChanges();
+              await  _context.SaveChangesAsync();
 
                 return Ok();
             }
