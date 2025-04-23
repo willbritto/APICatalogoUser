@@ -11,14 +11,18 @@ namespace Estudando_API.Controllers
     public class UsuariosController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        public UsuariosController(ApplicationDbContext context)
+        private readonly ILogger _logger;
+        public UsuariosController(ApplicationDbContext context, ILogger<UsuariosController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         [HttpGet("Produtos")]
         public ActionResult<IEnumerable<Usuario>> GetUserProduct()
         {
+            _logger.LogInformation("Relacionamento entre a tabela Usuarios e Produtos");
+            _logger.LogInformation(" ================= GET/Usuarios/Produtos =====================");
             try
             {
                 return _context.Usuarios.Include(p => p.Produtos).Where(c => c.UsuarioId >= 1).ToList();
@@ -35,6 +39,7 @@ namespace Estudando_API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Usuario>> AllUserGet()
         {
+            _logger.LogInformation(" ================= GET/Usuarios =====================");
             try
             {
                 var usuarios = _context.Usuarios.Take(10).ToList();
@@ -54,6 +59,7 @@ namespace Estudando_API.Controllers
         [HttpGet("{id:int}", Name = "ObterUsuario")]
         public ActionResult<Usuario> UserIdGet(int id)
         {
+            _logger.LogInformation(" ================= GET/Usuarios/{id} =====================");
             try
             {
                 var usuario = _context.Usuarios.FirstOrDefault(u => u.UsuarioId == id);
@@ -74,6 +80,7 @@ namespace Estudando_API.Controllers
         [HttpPost]
         public ActionResult CreateUserPost(Usuario usuario)
         {
+            _logger.LogInformation(" ================= POST/Usuarios =====================");
             try
             {
                 if (usuario is null)
@@ -95,6 +102,7 @@ namespace Estudando_API.Controllers
         [HttpPut("{id:int}")]
         public ActionResult UpdateUserPut(int id, Usuario usuario)
         {
+            _logger.LogInformation(" ================= PUT/Usuarios/{id} =====================");
             try
             {
                 if (id != usuario.UsuarioId)
@@ -114,6 +122,7 @@ namespace Estudando_API.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult DeleteUser(int id)
         {
+            _logger.LogInformation(" ================= DELETE/Usuarios/{id} =====================");
             try
             {
                 var usuario = _context.Usuarios.FirstOrDefault(p => p.UsuarioId == id);
