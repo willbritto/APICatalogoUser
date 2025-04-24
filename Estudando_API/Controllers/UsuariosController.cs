@@ -46,6 +46,7 @@ namespace Estudando_API.Controllers
                 var usuarios = await _context.Usuarios.Take(10).ToListAsync();
                 if (usuarios is null)
                 {
+                    _logger.LogWarning($"Não há usuários cadastrados no banco de dados ...  ");
                     return NotFound($"Não há usuários cadastrados no banco de dados ...  ");
                 }
                 return usuarios;
@@ -66,6 +67,7 @@ namespace Estudando_API.Controllers
                 var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UsuarioId == id);
                 if (usuario is null)
                 {
+                    _logger.LogWarning($"Usuario com id = {id} não cadastrado ...");
                     return NotFound($"Usuario com id = {id} não cadastrado ...");
                 }
                 return usuario;
@@ -86,10 +88,11 @@ namespace Estudando_API.Controllers
             {
                 if (usuario is null)
                 {
+                    _logger.LogWarning("Dados inválidos/ erro ao cadastrar novo usuário ... ");
                     return BadRequest("Dados inválidos/ erro ao cadastrar novo usuário ... ");
                 }
                 _context.Usuarios.Add(usuario);
-               await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
                 return new CreatedAtRouteResult("ObterUsuario", new { id = usuario.UsuarioId }, usuario);
             }
@@ -107,9 +110,13 @@ namespace Estudando_API.Controllers
             try
             {
                 if (id != usuario.UsuarioId)
+                {
+                    _logger.LogWarning("Dados inválidos");
                     return BadRequest("Dados inválidos");
+                }
+
                 _context.Entry(usuario).State = EntityState.Modified;
-               await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
                 return Ok();
             }
@@ -129,10 +136,11 @@ namespace Estudando_API.Controllers
                 var usuario = await _context.Usuarios.FirstOrDefaultAsync(p => p.UsuarioId == id);
                 if (usuario is null)
                 {
+                    _logger.LogWarning($"Usuário com o ID = {id} não cadastrado/existente ..");
                     return NotFound($"Usuário com o ID = {id} não cadastrado/existente ..");
                 }
                 _context.Remove(usuario);
-              await  _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
                 return Ok();
             }
