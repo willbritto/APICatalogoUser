@@ -20,7 +20,7 @@ namespace Estudando_API.Controllers
         }
 
         [HttpGet("Produtos")]
-        public async Task<ActionResult<IEnumerable<Usuario>>> GetUserProduct()
+        public async Task<ActionResult<IEnumerable<Usuario>>> GetUserProductAsync()
         {
             _logger.LogInformation("================== Relacionamento entre a tabela Usuarios e Produtos ===================");
             _logger.LogInformation(" ================= GET/Usuarios/Produtos =====================");
@@ -38,7 +38,7 @@ namespace Estudando_API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Usuario>>> AllUserGet()
+        public async Task<ActionResult<IEnumerable<Usuario>>> AllUserGetAsync()
         {
             _logger.LogInformation(" ================= GET/Usuarios =====================");
             try
@@ -58,7 +58,7 @@ namespace Estudando_API.Controllers
         }
 
         [HttpGet("{id:int}", Name = "ObterUsuario")]
-        public async Task<ActionResult<Usuario>> UserIdGet(int id)
+        public async Task<ActionResult<Usuario>> UserIdGetAsync(int id)
         {
             _logger.LogInformation(" ================= GET/Usuarios/{id} =====================");
             try
@@ -79,7 +79,7 @@ namespace Estudando_API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateUserPost(Usuario usuario)
+        public async Task<ActionResult> CreateUserPostAsync(Usuario usuario)
         {
             _logger.LogInformation(" ================= POST/Usuarios =====================");
             try
@@ -101,7 +101,7 @@ namespace Estudando_API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> UpdateUserPut(int id, Usuario usuario)
+        public async Task<ActionResult> UpdateUserPutAsync(int id, Usuario usuario)
         {
             _logger.LogInformation(" ================= PUT/Usuarios/{id} =====================");
             try
@@ -121,7 +121,7 @@ namespace Estudando_API.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> DeleteUser(int id)
+        public async Task<ActionResult> DeleteUserAsync(int id)
         {
             _logger.LogInformation(" ================= DELETE/Usuarios/{id} =====================");
             try
