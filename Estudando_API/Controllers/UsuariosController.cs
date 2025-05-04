@@ -22,11 +22,13 @@ namespace Estudando_API.Controllers
         [HttpGet("Produtos")]
         public async Task<ActionResult<IEnumerable<Usuario>>> GetUserProductAsync()
         {
-            _logger.LogInformation("================== Relacionamento entre a tabela Usuarios e Produtos ===================");
-            _logger.LogInformation(" ================= GET/Usuarios/Produtos =====================");
+            _logger.LogInformation("\n================== Relacionamento entre a tabela Usuarios e Produtos ==================\n");
+            _logger.LogInformation("\n ================= GET/Usuarios/Produtos =====================\n");
             try
             {
-                return await _context.Usuarios.Include(p => p.Produtos).Where(c => c.UsuarioId >= 1).ToListAsync();
+                return await _context.Usuarios.Include(p => p.Produtos)
+                    .Where(c => c.UsuarioId >= 1)
+                    .ToListAsync();
 
             }
             catch (Exception)
