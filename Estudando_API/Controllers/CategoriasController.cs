@@ -1,5 +1,6 @@
 ﻿using Estudando_API.Contexts;
 using Estudando_API.Models;
+using Estudando_API.Repositories.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,11 +12,13 @@ namespace Estudando_API.Controllers
     [ApiController]
     public class CategoriasController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _uof;
+        private readonly ILogger _logger;
 
-        public CategoriasController(ApplicationDbContext context)
+        public CategoriasController(IUnitOfWork uof, ILogger<CategoriasController> logger) 
         {
-            _context = context;
+            _uof = uof;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -23,13 +26,13 @@ namespace Estudando_API.Controllers
         {
             try
             {
-                var categorias = _context.Categorias.Take(10).ToList();
+                var categorias = _uof.CategoriaRepository.GetAll();
 
                 if (categorias is null)
                 {
                     return NotFound("Categorias não existe/cadastrada ...");
                 }
-                return categorias;
+                return Ok(categorias);
             }
             catch (Exception)
             {
@@ -43,13 +46,13 @@ namespace Estudando_API.Controllers
         {
             try
             {
-                var categoria = _context.Categorias.FirstOrDefault(p => p.CategoriaId == id);
+                var categoria = _uof.CategoriaRepository.Get(c=>c.CategoriaId == id);
 
                 if (categoria is null)
                 {
                     return NotFound($"Produto com ID = [{id}] não existente/ou cadastrado ...");
                 }
-                return categoria;
+                return Ok(categoria);
             }
             catch (Exception)
             {
@@ -67,8 +70,8 @@ namespace Estudando_API.Controllers
                     return NotFound($"Erro ao tentar cadastrar a {categoria} ... ");
                 }
 
-                _context.Categorias.Add(categoria);
-                _context.SaveChanges();
+                _uof.CategoriaRepository.Create(categoria);
+                _uof.Commit();
 
                 return new CreatedAtRouteResult("ObterCategoria",
                    new { id = categoria.CategoriaId }, categoria);
@@ -87,10 +90,12 @@ namespace Estudando_API.Controllers
             {
                 if (id != categoria.CategoriaId)
                     return BadRequest("Dados inválidos");
-                _context.Entry(categoria).State = EntityState.Modified;
-                _context.SaveChanges();
 
-                return Ok();
+
+                _uof.CategoriaRepository.Update(categoria);
+                _uof.Commit();
+
+                return Ok(categoria);
             }
             catch (Exception)
             {
@@ -104,12 +109,12 @@ namespace Estudando_API.Controllers
         {
             try
             {
-                var categoria = _context.Categorias.FirstOrDefault(p => p.CategoriaId == id);
+                var categoria = _uof.CategoriaRepository.Get(p => p.CategoriaId == id);
                 if (categoria is null)
                     return NotFound($"Produto com id = {id} não localizado ...");
 
-                _context.Categorias.Remove(categoria);
-                _context.SaveChanges();
+                _uof.CategoriaRepository.Delete(categoria);
+                _uof.Commit();
 
                 return Ok(categoria);
 
