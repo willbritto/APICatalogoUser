@@ -20,24 +20,7 @@ namespace Estudando_API.Controllers
             _uof = uof;
             _logger = logger;
         }
-
-        [HttpGet("Produtos")]
-        public ActionResult<IEnumerable<Usuario>> GetUserProductAsync(int id)
-        {
-            _logger.LogInformation("\n================== Relacionamento entre a tabela Usuarios e Produtos ==================\n");
-            _logger.LogInformation("\n ================= GET/Usuarios/Produtos =====================\n");
-            try
-            {
-                var usuarios = _uof.UsuarioRepository.GetUsuariosPorProduto(id); 
-                return Ok(usuarios);
-            }
-            catch (Exception)
-            {
-
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao tentar a solicitação");
-            }
-
-        }
+             
 
         [HttpGet]
         public ActionResult<IEnumerable<Usuario>> AllUserGetAsync()

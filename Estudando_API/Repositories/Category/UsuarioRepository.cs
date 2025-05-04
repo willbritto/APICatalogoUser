@@ -9,9 +9,5 @@ namespace Estudando_API.Repositories.Category
     {
         public UsuarioRepository(ApplicationDbContext context) : base(context) { }
 
-        public IEnumerable<Usuario> GetUsuariosPorProduto(int id)
-        {
-            return GetAll().Where(u => u.UsuarioId == id);
-        }
     }
 }

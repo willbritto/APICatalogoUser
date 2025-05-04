@@ -3,8 +3,5 @@ using Estudando_API.Repositories.Generic;
 
 namespace Estudando_API.Repositories.Interface
 {
-    public interface IUsuarioRepository : IRepository<Usuario>
-    {
-        IEnumerable<Usuario> GetUsuariosPorProduto(int id);
-    }
+    public interface IUsuarioRepository : IRepository<Usuario> {}
 }

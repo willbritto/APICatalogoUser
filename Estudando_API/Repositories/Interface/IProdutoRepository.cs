@@ -3,5 +3,8 @@ using Estudando_API.Repositories.Generic;
 
 namespace Estudando_API.Repositories.Interface
 {
-    public interface IProdutoRepository : IRepository<Produto> {}
+    public interface IProdutoRepository : IRepository<Produto> 
+    {
+        IEnumerable<Produto> GetProdutosPorCategoria(int id);
+    }
 }
