@@ -1,5 +1,6 @@
 ﻿using Estudando_API.Contexts;
 using Estudando_API.Models;
+using Estudando_API.Repositories.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +11,13 @@ namespace Estudando_API.Controllers
     [ApiController]
     public class ProdutosController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _uof;
+        private readonly ILogger _logger;
 
-        public ProdutosController(ApplicationDbContext context)
+        public ProdutosController(ILogger<ProdutosController> logger, IUnitOfWork uof)
         {
-            _context = context;
+           _uof = uof;
+            _logger = logger;
         }
 
        
@@ -23,14 +26,14 @@ namespace Estudando_API.Controllers
         {
             try
             {
-                var produtos = _context.Produtos.Take(10).ToList();
+                var produtos = _uof.ProdutoRepository.GetAll();
 
                 if (produtos is null)
                 {
                     return NotFound("Não existe produtos cadastrados no banco...");
                 }
 
-                return produtos;
+                return Ok(produtos);
 
             }
             catch (Exception)
@@ -45,14 +48,14 @@ namespace Estudando_API.Controllers
         {
             try
             {
-                var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+                var produto = _uof.ProdutoRepository.Get(p => p.ProdutoId == id);
 
                 if (produto is null)
                 {
                     return NotFound($"Produto com ID = [{id}] não existe/cadastrado ...");
                 }
 
-                return produto;
+                return Ok(produto);
 
             }
             catch (Exception)
@@ -70,8 +73,8 @@ namespace Estudando_API.Controllers
                 if (produto is null)
                     return NotFound($"Erro ao tenta cadastrar o {produto.Nome} ...");
 
-                _context.Produtos.Add(produto);
-                _context.SaveChanges();
+                _uof.ProdutoRepository.Create(produto);
+                _uof.Commit();
 
                 return new CreatedAtRouteResult("ObterProduto",
                     new { id = produto.ProdutoId }, produto);
@@ -92,10 +95,10 @@ namespace Estudando_API.Controllers
                 {
                     return BadRequest("Dados inválidos");
                 }
-                _context.Entry(produto).State = EntityState.Modified;
-                _context.SaveChanges();
+                _uof.ProdutoRepository.Update(produto);
+                _uof.Commit();
 
-                return Ok();
+                return Ok(produto);
             }
             catch (Exception)
             {
@@ -109,13 +112,13 @@ namespace Estudando_API.Controllers
         {
             try
             {
-                var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+                var produto = _uof.ProdutoRepository.Get(p => p.ProdutoId == id);
                 if (produto is null)
                 {
                     return NotFound($"Produto com ID = [{id}] não existe/cadastrado ...");
                 }
-                _context.Produtos.Remove(produto);
-                _context.SaveChanges();
+                _uof.ProdutoRepository.Delete(produto);
+                _uof.Commit();
 
                 return Ok(produto);
             }
