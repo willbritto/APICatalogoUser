@@ -1,4 +1,8 @@
 using Estudando_API.Contexts;
+using Estudando_API.Repositories.Category;
+using Estudando_API.Repositories.Generic;
+using Estudando_API.Repositories.Interface;
+using Estudando_API.Repositories.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -18,6 +22,12 @@ string mysqlConnection = builder.Configuration.GetConnectionString("DefaultStrin
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseMySql(mysqlConnection, ServerVersion.AutoDetect(mysqlConnection)));
+
+//Implementando as interface e categoria
+builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 var app = builder.Build();
 
