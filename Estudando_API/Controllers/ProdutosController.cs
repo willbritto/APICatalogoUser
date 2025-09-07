@@ -1,6 +1,7 @@
 ﻿using Estudando_API.Contexts;
 using Estudando_API.Models;
 using Estudando_API.Repositories.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,7 @@ namespace Estudando_API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Produto>>> AllProductGet()
         {
             try

@@ -11,7 +11,7 @@ namespace Estudando_API.Repositories.Category
 
         public async Task<IEnumerable<Produto>> GetProdutosPorCategoriaAysnc(int id)
         {
-            var produtos = await GetAllAysnc();
+            var produtos = await GetAllAsync();
             var categoriaProduto = produtos.Where(u => u.CategoriaId == id);
             return categoriaProduto;
         }
