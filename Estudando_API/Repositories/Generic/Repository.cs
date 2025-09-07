@@ -11,14 +11,14 @@ namespace Estudando_API.Repositories.Generic
         {
             _context = context;
         }
-        public IEnumerable<T> GetAll()
+        public async Task<IEnumerable<T>> GetAllAysnc()
         {
-            return _context.Set<T>().AsTracking().ToList();
+            return  await _context.Set<T>().AsTracking().ToListAsync();
         }
 
-        public T? Get(System.Linq.Expressions.Expression<Func<T, bool>> precidate)
+        public async Task<T?> GetAysnc(System.Linq.Expressions.Expression<Func<T, bool>> precidate)
         {
-            return _context.Set<T>().FirstOrDefault(precidate);
+            return await _context.Set<T>().FirstOrDefaultAsync(precidate);
         }
 
         public T Create(T entity)

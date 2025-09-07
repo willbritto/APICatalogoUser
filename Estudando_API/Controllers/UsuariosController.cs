@@ -23,12 +23,12 @@ namespace Estudando_API.Controllers
              
 
         [HttpGet]
-        public ActionResult<IEnumerable<Usuario>> AllUserGetAsync()
+        public async Task<ActionResult<IEnumerable<Usuario>>> AllUserGetAsync()
         {
             _logger.LogInformation(" ================= GET/Usuarios =====================");
             try
             {
-                var usuarios =  _uof.UsuarioRepository.GetAll();
+                var usuarios = await _uof.UsuarioRepository.GetAllAsync();
                 if (usuarios is null)
                 {
                     _logger.LogWarning($"Não há usuários cadastrados no banco de dados ...  ");
@@ -44,12 +44,12 @@ namespace Estudando_API.Controllers
         }
 
         [HttpGet("{id:int}", Name = "ObterUsuario")]
-        public ActionResult<Usuario> UserIdGetAsync(int id)
+        public async Task<ActionResult<Usuario>> UserIdGetAsync(int id)
         {
             _logger.LogInformation(" ================= GET/Usuarios/{id} =====================");
             try
             {
-                var usuario = _uof.UsuarioRepository.Get(u => u.UsuarioId == id);
+                var usuario = await _uof.UsuarioRepository.GetAsync(u => u.UsuarioId == id);
                 if (usuario is null)
                 {
                     _logger.LogWarning($"Usuario com id = {id} não cadastrado ...");
@@ -66,7 +66,7 @@ namespace Estudando_API.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateUserPostAsync(Usuario usuario)
+        public async Task<ActionResult> CreateUserPostAsync(Usuario usuario)
         {
             _logger.LogInformation(" ================= POST/Usuarios =====================");
             try
@@ -77,7 +77,7 @@ namespace Estudando_API.Controllers
                     return BadRequest("Dados inválidos/ erro ao cadastrar novo usuário ... ");
                 }
                 _uof.UsuarioRepository.Create(usuario);
-                _uof.Commit();
+               await _uof.CommitAsync();
 
                 return new CreatedAtRouteResult("ObterUsuario", new { id = usuario.UsuarioId }, usuario);
             }
@@ -89,7 +89,7 @@ namespace Estudando_API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult UpdateUserPutAsync(int id, Usuario usuario)
+        public async Task<ActionResult> UpdateUserPutAsync(int id, Usuario usuario)
         {
             _logger.LogInformation(" ================= PUT/Usuarios/{id} =====================");
             try
@@ -101,7 +101,7 @@ namespace Estudando_API.Controllers
                 }
 
                 _uof.UsuarioRepository.Update(usuario);
-                _uof.Commit();
+                await _uof.CommitAsync();
 
                 return Ok(usuario);
             }
@@ -113,19 +113,19 @@ namespace Estudando_API.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult DeleteUserAsync(int id)
+        public async Task<ActionResult> DeleteUserAsync(int id)
         {
             _logger.LogInformation(" ================= DELETE/Usuarios/{id} =====================");
             try
             {
-                var usuario = _uof.UsuarioRepository.Get(p => p.UsuarioId == id);
+                var usuario = await _uof.UsuarioRepository.GetAsync(p => p.UsuarioId == id);
                 if (usuario is null)
                 {
                     _logger.LogWarning($"Usuário com o ID = {id} não cadastrado/existente ..");
                     return NotFound($"Usuário com o ID = {id} não cadastrado/existente ..");
                 }
                 _uof.UsuarioRepository.Delete(usuario);
-                _uof.Commit();
+                await _uof.CommitAsync();
 
                 return Ok(usuario);
             }

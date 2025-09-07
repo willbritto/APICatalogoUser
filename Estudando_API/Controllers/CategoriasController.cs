@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Storage.Internal;
+using System.Threading.Tasks;
 
 namespace Estudando_API.Controllers
 {
@@ -22,11 +23,11 @@ namespace Estudando_API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Categoria>> AllCategoryGet()
+        public async Task<ActionResult<IEnumerable<Categoria>>> AllCategoryGet()
         {
             try
             {
-                var categorias = _uof.CategoriaRepository.GetAll();
+                var categorias = await _uof.CategoriaRepository.GetAllAsync();
 
                 if (categorias is null)
                 {
@@ -42,11 +43,11 @@ namespace Estudando_API.Controllers
         }
 
         [HttpGet("{id:int}", Name = "ObterCategoria")]
-        public ActionResult<Categoria> CategoryIdGet(int id) 
+        public async Task<ActionResult<Categoria>> CategoryIdGet(int id) 
         {
             try
             {
-                var categoria = _uof.CategoriaRepository.Get(c=>c.CategoriaId == id);
+                var categoria = await _uof.CategoriaRepository.GetAsync(c=>c.CategoriaId == id);
 
                 if (categoria is null)
                 {
@@ -61,7 +62,7 @@ namespace Estudando_API.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateCategoryPost(Categoria categoria) 
+        public async Task<ActionResult> CreateCategoryPost(Categoria categoria) 
         {
             try
             {
@@ -71,7 +72,7 @@ namespace Estudando_API.Controllers
                 }
 
                 _uof.CategoriaRepository.Create(categoria);
-                _uof.Commit();
+                await _uof.CommitAsync();
 
                 return new CreatedAtRouteResult("ObterCategoria",
                    new { id = categoria.CategoriaId }, categoria);
@@ -84,7 +85,7 @@ namespace Estudando_API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult UpdateCategoryPut(int id, Categoria categoria) 
+        public async Task<ActionResult> UpdateCategoryPut(int id, Categoria categoria) 
         {
             try
             {
@@ -93,7 +94,7 @@ namespace Estudando_API.Controllers
 
 
                 _uof.CategoriaRepository.Update(categoria);
-                _uof.Commit();
+               await _uof.CommitAsync();
 
                 return Ok(categoria);
             }
@@ -105,16 +106,16 @@ namespace Estudando_API.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult DeleteCategory(int id)         
+        public async Task<ActionResult> DeleteCategory(int id)         
         {
             try
             {
-                var categoria = _uof.CategoriaRepository.Get(p => p.CategoriaId == id);
+                var categoria = await _uof.CategoriaRepository.GetAsync(p => p.CategoriaId == id);
                 if (categoria is null)
                     return NotFound($"Produto com id = {id} não localizado ...");
 
                 _uof.CategoriaRepository.Delete(categoria);
-                _uof.Commit();
+               await _uof.CommitAsync();
 
                 return Ok(categoria);
 

@@ -4,6 +4,7 @@ using Estudando_API.Repositories.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Estudando_API.Controllers
 {
@@ -16,18 +17,26 @@ namespace Estudando_API.Controllers
 
         public ProdutosController(ILogger<ProdutosController> logger, IUnitOfWork uof)
         {
-           _uof = uof;
+            _uof = uof;
             _logger = logger;
         }
 
-        [HttpGet("Produtos")]
-        public ActionResult<IEnumerable<Usuario>> GetUserProductAsync(int id)
+        [HttpGet("Categorias/{id}")]
+        public async Task<ActionResult<IEnumerable<Usuario>>> GetUserProduct(int id)
         {
-            _logger.LogInformation("\n================== Relacionamento entre a tabela Usuarios e Produtos ==================\n");
-            _logger.LogInformation("\n ================= GET/Usuarios/Produtos =====================\n");
+            _logger.LogInformation("\n================== Relacionamento entre a tabela Produtos e Categorias ==================\n");
+            _logger.LogInformation("\n ================= GET/Produtos/Categorias/{id} =====================\n");
             try
             {
-                var produtos = _uof.ProdutoRepository.GetProdutosPorCategoria(id);
+
+                var produtos = await _uof.ProdutoRepository.GetProdutosPorCategoriaAysnc(id);
+
+                if (produtos is null)
+                {
+                    _logger.LogWarning($"Produto com ID = [{id}] não cadastrado/existe");
+                    return NotFound($"Produto com ID = [{id}] não cadastrado/existe");
+                }
+
                 return Ok(produtos);
             }
             catch (Exception)
@@ -39,11 +48,11 @@ namespace Estudando_API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Produto>> AllProductGet()
+        public async Task<ActionResult<IEnumerable<Produto>>> AllProductGet()
         {
             try
             {
-                var produtos = _uof.ProdutoRepository.GetAll();
+                var produtos = await _uof.ProdutoRepository.GetAllAsync();
 
                 if (produtos is null)
                 {
@@ -61,11 +70,11 @@ namespace Estudando_API.Controllers
         }
 
         [HttpGet("{id:int}", Name = "ObterProduto")]
-        public ActionResult<Produto> ProductIdGet(int id)
+        public async Task<ActionResult<Produto>> ProductIdGet(int id)
         {
             try
             {
-                var produto = _uof.ProdutoRepository.Get(p => p.ProdutoId == id);
+                var produto = await _uof.ProdutoRepository.GetAsync(p => p.ProdutoId == id);
 
                 if (produto is null)
                 {
@@ -83,7 +92,7 @@ namespace Estudando_API.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateProductPost(Produto produto)
+        public async Task<ActionResult> CreateProductPost(Produto produto)
         {
             try
             {
@@ -91,7 +100,7 @@ namespace Estudando_API.Controllers
                     return NotFound($"Erro ao tenta cadastrar o {produto.Nome} ...");
 
                 _uof.ProdutoRepository.Create(produto);
-                _uof.Commit();
+               await _uof.CommitAsync();
 
                 return new CreatedAtRouteResult("ObterProduto",
                     new { id = produto.ProdutoId }, produto);
@@ -104,7 +113,7 @@ namespace Estudando_API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult UpdateUserPut(int id, Produto produto)
+        public async Task<ActionResult> UpdateUserPut(int id, Produto produto)
         {
             try
             {
@@ -113,7 +122,7 @@ namespace Estudando_API.Controllers
                     return BadRequest("Dados inválidos");
                 }
                 _uof.ProdutoRepository.Update(produto);
-                _uof.Commit();
+               await _uof.CommitAsync();
 
                 return Ok(produto);
             }
@@ -125,17 +134,17 @@ namespace Estudando_API.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult DeleteProduct(int id)
+        public async Task<ActionResult> DeleteProduct(int id)
         {
             try
             {
-                var produto = _uof.ProdutoRepository.Get(p => p.ProdutoId == id);
+                var produto = await _uof.ProdutoRepository.GetAsync(p => p.ProdutoId == id);
                 if (produto is null)
                 {
                     return NotFound($"Produto com ID = [{id}] não existe/cadastrado ...");
                 }
                 _uof.ProdutoRepository.Delete(produto);
-                _uof.Commit();
+                await _uof.CommitAsync();
 
                 return Ok(produto);
             }

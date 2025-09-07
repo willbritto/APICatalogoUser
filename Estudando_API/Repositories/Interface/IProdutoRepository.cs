@@ -5,6 +5,6 @@ namespace Estudando_API.Repositories.Interface
 {
     public interface IProdutoRepository : IRepository<Produto> 
     {
-        IEnumerable<Produto> GetProdutosPorCategoria(int id);
+       Task<IEnumerable<Produto>> GetProdutosPorCategoriaAysnc(int id);
     }
 }

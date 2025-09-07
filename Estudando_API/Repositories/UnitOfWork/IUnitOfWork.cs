@@ -8,6 +8,6 @@ namespace Estudando_API.Repositories.UnitOfWork
         ICategoriaRepository CategoriaRepository { get; }
         IUsuarioRepository UsuarioRepository { get; }
 
-        void Commit();
+        Task CommitAsync();
     }
 }

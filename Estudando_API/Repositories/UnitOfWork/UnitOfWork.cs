@@ -41,7 +41,7 @@ namespace Estudando_API.Repositories.UnitOfWork
             }
         }
 
-        public void Commit()
+        public async Task CommitAysnc()
         {
             _context.SaveChanges();
         }

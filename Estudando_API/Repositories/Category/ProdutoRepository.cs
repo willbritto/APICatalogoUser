@@ -7,11 +7,13 @@ namespace Estudando_API.Repositories.Category
 {
     public class ProdutoRepository : Repository<Produto>, IProdutoRepository
     {
-        public ProdutoRepository(ApplicationDbContext context): base(context) { }
+        public ProdutoRepository(ApplicationDbContext context) : base(context) { }
 
-        public IEnumerable<Produto> GetProdutosPorCategoria(int id)
+        public async Task<IEnumerable<Produto>> GetProdutosPorCategoriaAysnc(int id)
         {
-            return GetAll().Where(u => u.CategoriaId == id);
-        }      
+            var produtos = await GetAllAysnc();
+            var categoriaProduto = produtos.Where(u => u.CategoriaId == id);
+            return categoriaProduto;
+        }
     }
 }
