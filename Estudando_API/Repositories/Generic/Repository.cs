@@ -1,5 +1,6 @@
 ﻿using Estudando_API.Contexts;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Estudando_API.Repositories.Generic
 {
@@ -11,12 +12,12 @@ namespace Estudando_API.Repositories.Generic
         {
             _context = context;
         }
-        public async Task<IEnumerable<T>> GetAllAysnc()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
             return  await _context.Set<T>().AsTracking().ToListAsync();
         }
 
-        public async Task<T?> GetAysnc(System.Linq.Expressions.Expression<Func<T, bool>> precidate)
+        public async Task<T?> GetAsync(Expression<Func<T, bool>> precidate)
         {
             return await _context.Set<T>().FirstOrDefaultAsync(precidate);
         }
