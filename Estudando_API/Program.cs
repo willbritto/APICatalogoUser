@@ -4,6 +4,7 @@ using Estudando_API.Repositories.Category;
 using Estudando_API.Repositories.Generic;
 using Estudando_API.Repositories.Interface;
 using Estudando_API.Repositories.UnitOfWork;
+using Estudando_API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -62,6 +63,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //Implementando as interface e categoria
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
